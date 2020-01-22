@@ -42,7 +42,7 @@ open class BasicOperation: ImageProcessingOperation {
     public let targets = TargetContainer()
     public let sources = SourceContainer()
     var shader:ShaderProgram
-    var inputFramebuffers = [UInt:Framebuffer]()
+    public var inputFramebuffers = [UInt:Framebuffer]()
     var renderFramebuffer:Framebuffer!
     var outputFramebuffer:Framebuffer { get { return renderFramebuffer } }
     let usesAspectRatio:Bool
@@ -103,7 +103,7 @@ open class BasicOperation: ImageProcessingOperation {
         }
     }
     
-    func renderFrame() {
+    open func renderFrame() {
         renderFramebuffer = sharedImageProcessingContext.framebufferCache.requestFramebufferWithProperties(orientation:.portrait, size:sizeOfInitialStageBasedOnFramebuffer(inputFramebuffers[0]!), stencil:mask != nil)
         
         let textureProperties = initialTextureProperties()
@@ -123,7 +123,7 @@ open class BasicOperation: ImageProcessingOperation {
         }
     }
     
-    func internalRenderFunction(_ inputFramebuffer:Framebuffer, textureProperties:[InputTextureProperties]) {
+    open func internalRenderFunction(_ inputFramebuffer:Framebuffer, textureProperties:[InputTextureProperties]) {
         renderQuadWithShader(shader, uniformSettings:uniformSettings, vertexBufferObject:sharedImageProcessingContext.standardImageVBO, inputTextures:textureProperties)
         releaseIncomingFramebuffers()
     }
@@ -183,11 +183,11 @@ open class BasicOperation: ImageProcessingOperation {
     }
     
     public func transmitPreviousImage(to target:ImageConsumer, atIndex:UInt) {
-        sharedImageProcessingContext.runOperationAsynchronously{
-            guard let renderFramebuffer = self.renderFramebuffer, (!renderFramebuffer.timingStyle.isTransient()) else { return }
+        // sharedImageProcessingContext.runOperationAsynchronously{
+        //     guard let renderFramebuffer = self.renderFramebuffer, (!renderFramebuffer.timingStyle.isTransient()) else { return }
             
-            renderFramebuffer.lock()
-            target.newFramebufferAvailable(renderFramebuffer, fromSourceIndex:atIndex)
-        }
+        //     renderFramebuffer.lock()
+        //     target.newFramebufferAvailable(renderFramebuffer, fromSourceIndex:atIndex)
+        // }
     }
 }
